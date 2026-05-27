@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import hashlib
 
 # Create an SQLite database
 conn = sqlite3.connect("students.db")
@@ -31,8 +32,19 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS users (
                 )''')
 
 # Add a default username and password (note that this is just an example)
-cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", ("admin", "password"))
-conn.commit()
+cursor.execute("SELECT * FROM users WHERE username = ?", ("admin",))
+
+existing_admin = cursor.fetchone()
+
+if not existing_admin:
+    hashed_password = hashlib.sha256("admin123".encode()).hexdigest()
+
+    cursor.execute(
+        "INSERT INTO users (username, password) VALUES (?, ?)",
+        ("admin", hashed_password)
+    )
+
+    conn.commit()
 
 # Create a directory for storing images
 if not os.path.exists("images"):
@@ -44,7 +56,12 @@ def login():
         username = input("Enter username: ")
         password = input("Enter password: ")
         
-        cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+        cursor.execute(
+            "SELECT * FROM users WHERE username = ? AND password = ?",
+            (username, hashed_password)
+        )
         user = cursor.fetchone()
         
         if user:
