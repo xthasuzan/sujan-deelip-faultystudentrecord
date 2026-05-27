@@ -139,8 +139,17 @@ def display_all_students():
 def upload_image():
     student_number = input("Enter the student number (image will be associated with this student): ")
     image_file = input("Enter the image file name (e.g., student_card.png): ")
+    filename = os.path.basename(image_file)
+
+    allowed_extensions = [".png", ".jpg", ".jpeg"]
+
+    ext = os.path.splitext(filename)[1].lower()
+
+    if ext not in allowed_extensions:
+        print("Invalid image format.")
+        return
     
-    image_path = os.path.join("images", image_file)
+    image_path = os.path.join("images", filename)
     
     if os.path.exists(image_path):
         cursor.execute("UPDATE students SET image_path = ? WHERE student_number = ?", (image_path, student_number))
