@@ -56,9 +56,19 @@ def login():
 # Function to add a student
 def add_student():
     student_number = input("Enter student number: ")
+    if not student_number.isdigit():
+        print("Student number must contain only digits.")
+        return
     name = input("Enter student name: ")
+    if not name.strip():
+        print("Name cannot be empty.")
+        return
     contact = input("Enter student contact information: ")
     ssn = input("Enter student SSN: ")
+    if len(ssn) < 4:
+        print("Invalid SSN.")
+        return
+    return
     
     image_path = input("Enter the image file name (e.g., student_card.png, press Enter to skip): ")
     if image_path:
@@ -118,7 +128,8 @@ def display_all_students():
             print(f"Student Number: {student[0]}")
             print(f"Name: {student[1]}")
             print(f"Contact: {student[2]}")
-            print(f"SSN: {student[3]}")
+            masked_ssn = "***-**-" + student[3][-4:]
+            print(f"SSN: {masked_ssn}")
             print(f"Image Path: {student[4]}")
             print()
     else:
