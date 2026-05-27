@@ -101,7 +101,8 @@ def search_student():
         print(f"Student Number: {student[0]}")
         print(f"Name: {student[1]}")
         print(f"Contact: {student[2]}")
-        print(f"SSN: {student[3]}")
+        masked_ssn = "***-**-" + student[3][-4:]
+        print(f"SSN: {masked_ssn}")
         print(f"Image Path: {student[4]}")
     else:
         print("Student not found.")
