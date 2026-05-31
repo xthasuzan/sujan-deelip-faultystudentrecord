@@ -52,24 +52,33 @@ if not os.path.exists("images"):
 
 # Function for login
 def login():
-    while True:
+    attempts = 0
+    MAX_ATTEMPTS = 3
+
+    while attempts < MAX_ATTEMPTS:
         username = input("Enter username: ")
         password = input("Enter password: ")
-        
+
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
         cursor.execute(
             "SELECT * FROM users WHERE username = ? AND password = ?",
             (username, hashed_password)
         )
+
         user = cursor.fetchone()
-        
+
         if user:
             print("Login successful.")
-            break
-        else:
-            print("Incorrect username or password. Please try again.")
+            return True
 
+        attempts += 1
+        print(
+            f"Incorrect username or password. Attempts left: {MAX_ATTEMPTS - attempts}"
+        )
+
+    print("Too many failed login attempts.")
+    return False
 # Function to add a student
 def add_student():
     student_number = input("Enter student number: ")
@@ -85,7 +94,7 @@ def add_student():
     if len(ssn) < 4:
         print("Invalid SSN.")
         return
-    return
+    
     
     image_path = input("Enter the image file name (e.g., student_card.png, press Enter to skip): ")
     if image_path:
@@ -198,7 +207,8 @@ def download_student_image():
 
 # Main method
 def main():
-    login()  # Login
+    if not login():
+        return
     while True:
         print("\nSelect an action:")
         print("1. Add a student")
@@ -225,6 +235,8 @@ def main():
             download_student_image()
         elif choice == "7":
             break
+        else:
+            print("Invalid choice. Please select 1-7.")
 
 if __name__ == "__main__":
     main()
